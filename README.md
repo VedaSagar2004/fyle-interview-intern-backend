@@ -35,11 +35,25 @@ virtualenv env --python=python3.8
 source env/bin/activate
 pip install -r requirements.txt
 ```
+#### Windows
+```
+virtualenv env --python=python3.8
+.\env\bin\activate
+pip install -r requirements.txt
+```
 ### Reset DB
 
 ```
 export FLASK_APP=core/server.py
+# if store.sqlite3 already exists run this command
 rm core/store.sqlite3
+flask db upgrade -d core/migrations/
+```
+#### Windows
+```
+set FLASK_APP=core/server.py
+# if store.sqlite3 already exists run this command
+del core/store.sqlite3
 flask db upgrade -d core/migrations/
 ```
 ### Start Server
@@ -55,4 +69,16 @@ pytest -vvv -s tests/
 # for test coverage report
 # pytest --cov
 # open htmlcov/index.html
+```
+## Docker Installation
+
+### Build the Docker Image
+```
+docker-compose build
+
+```
+### Run the container
+```
+docker-compose up
+
 ```
