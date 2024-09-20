@@ -53,7 +53,7 @@ flask db upgrade -d core/migrations/
 ```
 set FLASK_APP=core/server.py
 # if store.sqlite3 already exists run this command
-del core/store.sqlite3
+del core\store.sqlite3
 flask db upgrade -d core/migrations/
 ```
 ### Start Server
