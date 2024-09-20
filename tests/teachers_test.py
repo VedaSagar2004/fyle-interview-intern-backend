@@ -1,3 +1,7 @@
+import json
+from core.models.teachers import Teacher
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -9,6 +13,36 @@ def test_get_assignments_teacher_1(client, h_teacher_1):
     data = response.json['data']
     for assignment in data:
         assert assignment['teacher_id'] == 1
+
+
+def test_no_principal_header(client):
+    response = client.get(
+        '/principal/assignments'
+    )
+
+    assert response.status_code == 401
+
+
+def test_no_teacher_id(client):
+    headers = {
+        'X-Principal': json.dumps({
+            'user_id': 5
+        })
+    }
+    response = client.get(
+        '/principal/assignments',
+        headers=headers
+    )
+
+    assert response.status_code == 403
+
+
+def test_student_repr():
+    teacher = Teacher(id=1)
+    assert repr(teacher) ==  '<Teacher 1>'
+
+    teacher = Teacher(id=100)
+    assert repr(teacher) == '<Teacher 100>'
 
 
 def test_get_assignments_teacher_2(client, h_teacher_2):
@@ -23,6 +57,22 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
     for assignment in data:
         assert assignment['teacher_id'] == 2
         assert assignment['state'] in ['SUBMITTED', 'GRADED']
+
+
+def test_grade_assignment(client, h_teacher_1):
+    jsonObject={
+            "id": 1,
+            "grade": "A"
+        }
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json=jsonObject
+    )
+
+    assert response.status_code == 200
+    data = response.json['data']
+    assert data['grade'] == jsonObject['grade']
 
 
 def test_grade_assignment_cross(client, h_teacher_2):
